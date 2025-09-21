@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz Game</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f9f9f9; display:flex; justify-content:center; align-items:center; height:100vh; }
+    .quiz { background:white; padding:20px; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.2); width:90%; max-width:400px; }
+    h2 { margin-bottom:15px; }
+    .options button { display:block; width:100%; margin:5px 0; padding:10px; border:none; border-radius:6px; background:#eee; cursor:pointer; }
+    .options button:hover { background:#ddd; }
+    #next-btn { margin-top:15px; width:100%; padding:10px; border:none; border-radius:6px; background:#4CAF50; color:white; display:none; cursor:pointer; }
+    #result { margin-top:15px; font-weight:bold; }
+  </style>
+</head>
+<body>
+  <div class="quiz">
+    <h2 id="question">Question text</h2>
+    <div class="options" id="options"></div>
+    <button id="next-btn">Next</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const questions = [
+      {question: "What is the capital of France?", options: ["London","Paris","Rome","Berlin"], answer:"Paris"},
+      {question: "Which planet is called the Red Planet?", options: ["Earth","Venus","Mars","Jupiter"], answer:"Mars"},
+      {question: "Who wrote 'Hamlet'?", options: ["Charles Dickens","Mark Twain","William Shakespeare","Jane Austen"], answer:"William Shakespeare"}
+    ];
+
+    let current = 0, score = 0;
+    const qEl = document.getElementById("question");
+    const optEl = document.getElementById("options");
+    const nextBtn = document.getElementById("next-btn");
+    const resEl = document.getElementById("result");
+
+    function showQuestion() {
+      let q = questions[current];
+      qEl.textContent = q.question;
+      optEl.innerHTML = "";
+      q.options.forEach(opt => {
+        let btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(opt);
+        optEl.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(opt) {
+      if(opt === questions[current].answer) score++;
+      nextBtn.style.display = "block";
+    }
+
+    nextBtn.onclick = () => {
+      current++;
+      nextBtn.style.display = "none";
+      if(current < questions.length) {
+        showQuestion();
+      } else {
+        qEl.style.display = "none";
+        optEl.style.display = "none";
+        resEl.textContent = `Game Over 🎉 You scored ${score}/${questions.length}`;
+      }
+    }
+
+    showQuestion();
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Luxury Quiz Game</title>
+  <style>
+    :root {
+      --bg1: #6a11cb;
+      --bg2: #2575fc;
+      --panel: rgba(255,255,255,0.08);
+      --gold: #ffd700;
+    }
+    body {
+      margin:0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg,var(--bg1),var(--bg2));
+      color: #fff;
+      height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+    }
+    .container {
+      width:90%;
+      max-width:540px;
+      background: var(--panel);
+      padding:28px;
+      border-radius:18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+      text-align:center;
+      animation: fadeIn 0.8s ease;
+    }
+    @keyframes fadeIn {
+      from {opacity:0; transform:scale(0.9);}
+      to {opacity:1; transform:scale(1);}
+    }
+    h1 { color:var(--gold); margin-bottom:18px; }
+    h2 { margin:12px 0; }
+    .category-btn {
+      display:block;
+      width:84%;
+      margin:12px auto;
+      padding:12px;
+      background: linear-gradient(45deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02));
+      border:1px solid rgba(255,255,255,0.1);
+      border-radius:12px;
+      color:#fff;
+      font-weight:bold;
+      text-align:left;
+      cursor:pointer;
+      transition:all 0.3s ease;
+    }
+    .category-btn .icon {margin-right:10px;}
+    .category-btn:hover {
+      transform:scale(1.05);
+      box-shadow:0 6px 20px rgba(0,0,0,0.35);
+    }
+    #quiz {display:none;}
+    .timer {
+      display:inline-block;
+      background: rgba(0,0,0,0.3);
+      padding:6px 14px;
+      border-radius:12px;
+      font-weight:bold;
+      color:var(--gold);
+      margin-bottom:12px;
+    }
+    #question {
+      font-size:18px;
+      min-height:48px;
+      animation: slideIn 0.6s ease;
+    }
+    @keyframes slideIn {
+      from {opacity:0; transform:translateY(15px);}
+      to {opacity:1; transform:translateY(0);}
+    }
+    .options-wrap {max-height:240px; overflow:auto;}
+    .option {
+      background: rgba(255,255,255,0.08);
+      margin:10px auto;
+      padding:12px;
+      border-radius:10px;
+      cursor:pointer;
+      text-align:left;
+      transition:0.3s;
+      animation: fadeIn 0.6s ease;
+    }
+    .option:hover {background: rgba(255,255,255,0.18);}
+    .option.correct {background:#2ecc71 !important; color:#fff;}
+    .option.wrong {background:#e74c3c !important; color:#fff;}
+    #result {display:none;}
+    .result-box {
+      padding:20px;
+      border-radius:14px;
+      animation: fadeIn 1s ease;
+    }
+    .pass {
+      background: rgba(46, 204, 113, 0.2);
+      box-shadow:0 0 20px #2ecc71;
+      color:#2ecc71;
+    }
+    .fail {
+      background: rgba(231, 76, 60, 0.2);
+      box-shadow:0 0 20px #e74c3c;
+      color:#e74c3c;
+    }
+    .small-btn {
+      margin:10px;
+      padding:10px 16px;
+      border:none;
+      border-radius:10px;
+      background: linear-gradient(45deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02));
+      color:#fff;
+      cursor:pointer;
+      font-weight:bold;
+      transition:0.3s;
+    }
+    .small-btn:hover {transform:scale(1.05);}
+  </style>
+</head>
+<body>
+  <div class="container" id="categories">
+    <h1>Choose Category</h1>
+    <button class="category-btn" onclick="startQuiz('cs')"><span class="icon">💻</span>Computer Science</button>
+    <button class="category-btn" onclick="startQuiz('finance')"><span class="icon">💰</span>Finance</button>
+    <button class="category-btn" onclick="startQuiz('medical')"><span class="icon">⚕️</span>Medical</button>
+    <button class="category-btn" onclick="startQuiz('law')"><span class="icon">⚖️</span>Law</button>
+  </div>
+
+  <div class="container" id="quiz">
+    <div class="timer" id="timer">15s</div>
+    <h2 id="question">Question</h2>
+    <div class="options-wrap"><div id="options"></div></div>
+    <div>
+      <button class="small-btn" onclick="goToCategories()">⬅ Categories</button>
+      <button class="small-btn" onclick="restartQuiz()">🔄 Restart</button>
+    </div>
+  </div>
+
+  <div class="container" id="result">
+    <div id="resultBox" class="result-box">
+      <h2 id="resultText"></h2>
+      <p id="scoreText"></p>
+    </div>
+    <button class="small-btn" onclick="restartQuiz()">🔄 Restart</button>
+    <button class="small-btn" onclick="goToCategories()">⬅ Categories</button>
+  </div>
+
+<script>
+  const quizData = {
+    cs: [
+      {q:"What does CPU stand for?", opts:["Central Processing Unit","Control Process Unit","Central Power Unit","Compute Power Utility"], answer:0},
+      {q:"HTML stands for?", opts:["Hyper Text Markup Language","High Text Machine Language","Home Tool Markup Language","None"], answer:0},
+      {q:"Which is a programming language?", opts:["HTTP","Python","USB","HTML"], answer:1},
+      {q:"What is 1 Terabyte?", opts:["1000 GB","1024 GB","1200 GB","512 GB"], answer:1},
+      {q:"Which company created Windows?", opts:["Apple","Google","Microsoft","IBM"], answer:2},
+      {q:"In binary, what is 1+1?", opts:["1","2","10","11"], answer:2},
+      {q:"Which of these is a loop structure?", opts:["if","while","else","switch"], answer:1},
+      {q:"SQL is used for?", opts:["Databases","Web design","Graphics","OS"], answer:0},
+      {q:"Which is an OS?", opts:["Linux","Oracle","C++","MySQL"], answer:0},
+      {q:"RAM stands for?", opts:["Random Access Memory","Read All Memory","Run Active Memory","Rapid Access Mode"], answer:0}
+    ],
+    finance: [
+      {q:"What is ROI?", opts:["Rate of Interest","Return on Investment","Ratio of Income","Revenue of Industry"], answer:1},
+      {q:"Currency of Japan?", opts:["Dollar","Yen","Won","Rupee"], answer:1},
+      {q:"Which market deals in shares?", opts:["Stock Market","Super Market","Black Market","Bond Market"], answer:0},
+      {q:"Banking regulator in India?", opts:["SBI","RBI","IRDA","SEBI"], answer:1},
+      {q:"Full form of GST?", opts:["Goods and Service Tax","General Sales Tax","Gross Service Tax","Government Sales Tax"], answer:0},
+      {q:"Which is a liability?", opts:["Loan","Building","Cash","Land"], answer:0},
+      {q:"Sensex belongs to?", opts:["NSE","BSE","NASDAQ","LSE"], answer:1},
+      {q:"Which is not a currency?", opts:["Euro","Pound","Dollar","Peso","Liter"], answer:4},
+      {q:"Income – Expenses =", opts:["Profit","Loss","Capital","Cash"], answer:0},
+      {q:"Which is India's central bank?", opts:["SBI","ICICI","RBI","HDFC"], answer:2}
+    ],
+    medical: [
+      {q:"Normal human body temperature?", opts:["35°C","36°C","37°C","38°C"], answer:2},
+      {q:"Organ that pumps blood?", opts:["Lungs","Kidney","Heart","Liver"], answer:2},
+      {q:"Which vitamin from sunlight?", opts:["A","B","C","D"], answer:3},
+      {q:"RBC stands for?", opts:["Red Blood Cells","Random Body Cells","Real Blood Count","Rapid Blood Cells"], answer:0},
+      {q:"How many bones in adult body?", opts:["206","210","201","208"], answer:0},
+      {q:"Largest organ?", opts:["Liver","Skin","Heart","Lungs"], answer:1},
+      {q:"Diabetes is related to?", opts:["Heart","Liver","Pancreas","Lungs"], answer:2},
+      {q:"Blood pressure normal value?", opts:["120/80 mmHg","140/90 mmHg","100/70 mmHg","110/80 mmHg"], answer:0},
+      {q:"Which carries oxygen?", opts:["WBC","RBC","Platelets","Plasma"], answer:1},
+      {q:"Covid-19 affects mainly?", opts:["Heart","Lungs","Kidney","Brain"], answer:1}
+    ],
+    law: [
+      {q:"What does IPC stand for?", opts:["International Police Code","Indian Penal Code","Internal Policy Code","Indian Public Council"], answer:1},
+      {q:"Right to Equality in India is in?", opts:["Article 12","Article 14","Article 21","Article 19"], answer:1},
+      {q:"Supreme Court located at?", opts:["Delhi","Mumbai","Kolkata","Chennai"], answer:0},
+      {q:"Habeas Corpus is a?", opts:["Law","Writ","Act","Article"], answer:1},
+      {q:"Minimum age for voting in India?", opts:["16","18","21","25"], answer:1},
+      {q:"How many High Courts in India (2023)?", opts:["24","25","26","28"], answer:2},
+      {q:"Father of Indian Constitution?", opts:["Nehru","Ambedkar","Gandhi","Patel"], answer:1},
+      {q:"Which is not a fundamental right?", opts:["Right to Freedom","Right to Vote","Right to Equality","Right to Education"], answer:1},
+      {q:"Who appoints Chief Justice of India?", opts:["PM","President","Parliament","Governor"], answer:1},
+      {q:"First woman judge of SC India?", opts:["Fathima Beevi","Indira Gandhi","Anna Chandy","Sujata Manohar"], answer:0}
+    ]
+  };
+
+  let currentSet = [];
+  let idx = 0;
+  let score = 0;
+  let timerId = null;
+  let timeLeft = 15;
+
+  const elCategories=document.getElementById('categories');
+  const elQuiz=document.getElementById('quiz');
+  const elResult=document.getElementById('result');
+  const elQuestion=document.getElementById('question');
+  const elOptions=document.getElementById('options');
+  const elTimer=document.getElementById('timer');
+  const elResultBox=document.getElementById('resultBox');
+  const elResultText=document.getElementById('resultText');
+  const elScoreText=document.getElementById('scoreText');
+
+  function showPanel(id){
+    elCategories.style.display="none";
+    elQuiz.style.display="none";
+    elResult.style.display="none";
+    document.getElementById(id).style.display="block";
+  }
+
+  function startQuiz(cat){
+    currentSet=quizData[cat];
+    idx=0; score=0;
+    showPanel('quiz');
+    loadQuestion();
+  }
+
+  function loadQuestion(){
+    if(idx>=currentSet.length){endQuiz();return;}
+    clearInterval(timerId);
+    timeLeft=15; elTimer.textContent=timeLeft+"s";
+    const item=currentSet[idx];
+    elQuestion.textContent=item.q;
+    elOptions.innerHTML="";
+    item.opts.forEach((opt,i)=>{
+      const d=document.createElement('div');
+      d.className="option";
+      d.textContent=opt;
+      d.onclick=()=>choose(i,d);
+      elOptions.appendChild(d);
+    });
+    timerId=setInterval(()=>{
+      timeLeft--; elTimer.textContent=timeLeft+"s";
+      if(timeLeft<=0){clearInterval(timerId); revealCorrect(); setTimeout(()=>{idx++;loadQuestion();},1200);}
+    },1000);
+  }
+
+  function choose(i,el){
+    clearInterval(timerId);
+    const correct=currentSet[idx].answer;
+    if(i===correct){el.classList.add('correct'); score++;}
+    else {
+      el.classList.add('wrong');
+      [...elOptions.children].forEach((c,j)=>{if(j===correct)c.classList.add('correct');});
+    }
+    setTimeout(()=>{idx++;loadQuestion();},1200);
+  }
+
+  function revealCorrect(){
+    const correct=currentSet[idx].answer;
+    [...elOptions.children].forEach((c,j)=>{if(j===correct)c.classList.add('correct');});
+  }
+
+  function endQuiz(){
+    clearInterval(timerId);
+    showPanel('result');
+    elScoreText.textContent=`Score: ${score} / ${currentSet.length}`;
+    if(score>=Math.ceil(currentSet.length/2)){
+      elResultBox.className="result-box pass";
+      elResultText.textContent="🎉 You Passed!";
+    } else {
+      elResultBox.className="result-box fail";
+      elResultText.textContent="❌ You Failed!";
+    }
+  }
+
+  function restartQuiz(){idx=0;score=0;showPanel('quiz');loadQuestion();}
+  function goToCategories(){clearInterval(timerId);showPanel('categories');}
+
+  showPanel('categories');
+</script>
+</body>
+</html>
